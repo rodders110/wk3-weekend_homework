@@ -1,5 +1,6 @@
 require_relative("../sql_runner")
 require_relative('tickets')
+require_relative('schedule')
 
 class Customer
 
@@ -86,6 +87,29 @@ class Customer
     else
         p "Sorry there are no seats left for this screening"
     end
+  end
+
+  def schedule()
+    sql = "SELECT screenings.times, films.title, customers.name FROM screenings INNER JOIN tickets ON screenings.ticket_id = tickets.id INNER JOIN films ON tickets.film_id = films.id INNER JOIN customers ON tickets.customer_id = customers.id WHERE customers.name = $1"
+    values = [@name]
+    schedule = SqlRunner.run(sql, values)
+    rundown = schedule.map {|x| Schedule.new(x)}
+    return tp(rundown, :times, :title, :name)
+  end
+
+  def tp(objects, *method_names)
+    terminal_width = 'tput cols'.to_i
+    cols = objects.count + 1
+    col_width = (terminal_width / cols) - 1
+
+    Array(method_names).map do |method_name|
+      cells = objects.map{ |o| o.send(method_name).inspect }
+      cells.unshift(method_name )
+
+      puts cells.map{ |cell| cell.to_s.ljust(col_width) }.join
+    end
+
+    nil
   end
 
 end
