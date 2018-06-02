@@ -66,4 +66,20 @@ class Film
     return customers.count()
   end
 
+  def screenings()
+    sql = "SELECT screenings.times FROM screenings INNER JOIN tickets ON screenings.ticket_id = tickets.id INNER JOIN films ON tickets.film_id = films.id WHERE films.id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    screenings = results.map {|result| Screening.new(result)}
+    times = []
+    for screening in screenings
+      times << screening.times
+    end
+    return times
+  end
+
+  def pop_screening()
+    array = screenings()
+    array.max_by {|x| array.count(x)}
+  end
 end

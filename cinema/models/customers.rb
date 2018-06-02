@@ -1,4 +1,5 @@
 require_relative("../sql_runner")
+require_relative('tickets')
 
 class Customer
 
@@ -69,12 +70,22 @@ class Customer
     return results.count()
   end
 
-  def buy_ticket(film)
-    @funds -= film.price.to_i
-    update()
-    sql = "INSERT INTO tickets (customer_id, film_id) VALUES ($1, $2)"
-    values = [@id, film.id]
-    SqlRunner.run(sql, values)
+  def buy_ticket(film, screening)
+    if screening.spaces != 0
+      @funds -= film.price.to_i
+      update()
+      screening.spaces -= 1
+      screening.update()
+      ticket = Ticket.new({
+        'customer_id' => @id,
+        'film_id' => film.id,
+        })
+        ticket.save()
+        screening.ticket_id = ticket.id
+        screening.save()
+    else
+        p "Sorry there are no seats left for this screening"
+    end
   end
 
 end

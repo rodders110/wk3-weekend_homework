@@ -1,0 +1,3 @@
+SELECT screenings.*, tickets.film_id, films.title FROM screenings INNER JOIN tickets ON screenings.ticket_id = tickets.id INNER JOIN films ON tickets.film_id = films.id
+
+This returns film titles from screenings
