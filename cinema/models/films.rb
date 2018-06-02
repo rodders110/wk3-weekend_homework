@@ -67,6 +67,18 @@ class Film
   end
 
   def screenings()
+    sql = "SELECT screenings.* FROM screenings INNER JOIN tickets ON screenings.ticket_id = tickets.id INNER JOIN films ON tickets.film_id = films.id WHERE films.id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    screenings = results.map {|result| Screening.new(result)}
+    ids = []
+    for screening in screenings
+      ids << screening.id
+    end
+    return ids
+  end
+
+  def times()
     sql = "SELECT screenings.times FROM screenings INNER JOIN tickets ON screenings.ticket_id = tickets.id INNER JOIN films ON tickets.film_id = films.id WHERE films.id = $1"
     values = [@id]
     results = SqlRunner.run(sql, values)
@@ -79,7 +91,7 @@ class Film
   end
 
   def pop_screening()
-    array = screenings()
+    array = times()
     array.max_by {|x| array.count(x)}
   end
 end
