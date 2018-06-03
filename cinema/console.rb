@@ -24,6 +24,13 @@ customer2 = Customer.new({
 
 customer2.save()
 
+customer3 = Customer.new({
+	'name' => 'Roddy Daly',
+	'funds' => 100
+	})
+
+customer3.save()
+
 
 customer1.name = 'Freddy Charleston'
 customer1.funds = 300
@@ -54,6 +61,13 @@ film3 = Film.new({
 
 film3.save()
 
+film4 = Film.new({
+	'title' => 'The Godfather',
+	'price' => '2'
+	})
+
+film4.save()
+
 film1.title = 'I Kill Giants'
 film1.price = '4'
 film1.update()
@@ -69,42 +83,42 @@ ticket1 = Ticket.new({
 ticket1.save()
 
 ticket2 = Ticket.new({
-  'customer_id' => customer1.id,
+  'customer_id' => customer2.id,
   'film_id' => film3.id
   })
 ticket2.save()
 
 ticket3 = Ticket.new({
-  'customer_id' => customer1.id,
+  'customer_id' => customer3.id,
   'film_id' => film2.id
   })
 ticket3.save()
 
-ticket1.customer_id = customer2.id
-ticket1.film_id = film2.id
-ticket1.update
+#ticket1.customer_id = customer2.id
+#ticket1.film_id = film4.id
+#ticket1.update
 
 # ticket1.delete()
 
 query3 = ticket1.find()
 
 screening1 = Screening.new({
-  'ticket_id' => ticket1.id,
+  'film_id' => film1.id,
   'times' => '12:00',
   'spaces' => 20
   })
 screening1.save()
 
 screening2 = Screening.new({
-  'ticket_id' => ticket2.id,
+  'film_id' => film2.id,
   'times' => '13:00',
   'spaces' => 20
   })
 screening2.save()
 
 screening3 = Screening.new({
-  'ticket_id' => ticket3.id,
-  'times' => '13:00',
+  'film_id' => film3.id,
+  'times' => '17:00',
   'spaces' => 20
   })
 screening3.save()

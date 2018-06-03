@@ -72,7 +72,7 @@ class Customer
   end
 
   def buy_ticket(film, screening)
-    if screening.spaces != 0
+    if screening.spaces > 0
       @funds -= film.price.to_i
       update()
       screening.spaces -= 1
@@ -82,7 +82,7 @@ class Customer
         'film_id' => film.id,
         })
         ticket.save()
-        screening.ticket_id = ticket.id
+        screening.film_id = film.id
         screening.save()
     else
         p "Sorry there are no seats left for this screening"
@@ -90,26 +90,29 @@ class Customer
   end
 
   def schedule()
-    sql = "SELECT screenings.times, films.title, customers.name FROM screenings INNER JOIN tickets ON screenings.ticket_id = tickets.id INNER JOIN films ON tickets.film_id = films.id INNER JOIN customers ON tickets.customer_id = customers.id WHERE customers.name = $1"
-    values = [@name]
-    schedule = SqlRunner.run(sql, values)
-    rundown = schedule.map {|x| Schedule.new(x)}
-    return tp(rundown, :times, :title, :name)
+  sql = "SELECT screenings.times, films.title FROM tickets INNER JOIN screenings ON screenings.film_id = tickets.film_id INNER JOIN films ON screenings.film_id = films.id WHERE tickets.customer_id = $1"
+  values = [@id]
+  schedule = SqlRunner.run(sql, values)
+  schedule = schedule.uniq
+  rundown = schedule.map {|x| Schedule.new(x)}
+  rundown = rundown
+  return tp(rundown, :times, :title)
   end
 
   def tp(objects, *method_names)
-    terminal_width = 'tput cols'.to_i
-    cols = objects.count + 1
-    col_width = (terminal_width / cols) - 1
+  terminal_width = `tput cols`.to_i
+  cols = objects.count + 1 # Label column
+  col_width = (terminal_width / cols) - 1 # Column spacing
 
-    Array(method_names).map do |method_name|
-      cells = objects.map{ |o| o.send(method_name).inspect }
-      cells.unshift(method_name )
+  Array(method_names).map do |method_name|
+    cells = objects.map{ |o| o.send(method_name).inspect }
+    cells.unshift(method_name)
 
-      puts cells.map{ |cell| cell.to_s.ljust(col_width) }.join
-    end
-
-    nil
+    puts cells.map{ |cell| cell.to_s.ljust(col_width) }.join ' '
   end
+
+  nil
+end
+
 
 end

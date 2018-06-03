@@ -6,7 +6,7 @@ class SqlRunner
     begin
       db = PG.connect({
       dbname: 'cinema',
-      host: 'localhost'
+      host: ''
       })
       db.prepare("query", sql)
       result = db.exec_prepared("query", values)
