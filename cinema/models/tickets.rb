@@ -19,8 +19,8 @@ class Ticket
   end
 
   def self.find_all()
-    sql = "SELECT * FROM tickets"
-    results = SqlRunner.new(sql)
+    sql = "SELECT * FROM tickets ORDER BY id ASC"
+    results = SqlRunner.run(sql)
     records = results.map{|result| Ticket.new(result)}
     return records
   end
